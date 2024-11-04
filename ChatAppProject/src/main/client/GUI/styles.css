@@ -1,0 +1,18 @@
+.button {
+    -fx-background-color: #4285f4;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.button:hover {
+    -fx-background-color: #357ae8;
+}
+
+.text-field, .password-field {
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 5;
+    -fx-padding: 8;
+    -fx-background-radius: 5;
+}
