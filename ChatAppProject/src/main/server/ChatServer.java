@@ -1,5 +1,8 @@
 package main.server;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+
 public class ChatServer {
     private ServerSocket serverSocket;
 
