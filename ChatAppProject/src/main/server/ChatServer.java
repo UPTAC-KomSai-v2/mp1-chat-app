@@ -2,9 +2,15 @@ package main.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 public class ChatServer {
     private ServerSocket serverSocket;
+    private AuthController authController;
+
+    public ChatServer() {
+        authController = new AuthController(); // Initialize AuthController
+    }
 
     public void start() {
         try {
@@ -12,7 +18,8 @@ public class ChatServer {
             System.out.println("Server started on port 8080");
 
             while (true) {
-                new ClientHandler(serverSocket.accept()).start();
+                Socket clientSocket = serverSocket.accept();
+                new ClientHandler(clientSocket, authController).start();
             }
         } catch (IOException e) {
             e.printStackTrace();

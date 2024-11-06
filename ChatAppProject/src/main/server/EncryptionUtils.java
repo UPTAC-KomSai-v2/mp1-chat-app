@@ -1,29 +1,32 @@
 package main.server;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class EncryptionUtils {
-    private static SecretKey secretKey;
 
-    static {
+    public static String hashPassword(String password) {
         try {
-            secretKey = KeyGenerator.getInstance("AES").generateKey();
-        } catch (Exception e) {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(password.getBytes());
+            return bytesToHex(hash);
+        } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
+            return null;
         }
     }
 
-    public static byte[] encrypt(String message) throws Exception {
-        Cipher cipher = Cipher.getInstance("AES");
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-        return cipher.doFinal(message.getBytes());
+    public static boolean verifyPassword(String password, String storedHash) {
+        return hashPassword(password).equals(storedHash);
     }
 
-    public static String decrypt(byte[] encryptedMessage) throws Exception {
-        Cipher cipher = Cipher.getInstance("AES");
-        cipher.init(Cipher.DECRYPT_MODE, secretKey);
-        return new String(cipher.doFinal(encryptedMessage));
+    private static String bytesToHex(byte[] hash) {
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : hash) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) hexString.append('0');
+            hexString.append(hex);
+        }
+        return hexString.toString();
     }
 }
