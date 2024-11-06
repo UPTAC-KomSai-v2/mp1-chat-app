@@ -2,6 +2,7 @@ package main.client;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import main.client.GUI.LoginScreen;
 
 public class ChatClient extends Application {
     @Override
