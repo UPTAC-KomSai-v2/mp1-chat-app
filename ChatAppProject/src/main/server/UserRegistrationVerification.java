@@ -56,11 +56,11 @@ public class UserRegistrationVerification {
         }
 
         if(isEmailUnique(user.getEmail())) {
-            return "Email already exists.";
+            return "Email already in use.";
         }
 
         if(!isPasswordValid(user.getPasswordHash())) {
-            return "Invalid password format.";
+            return "Weak password.";
         }
 
         // Hash Password
