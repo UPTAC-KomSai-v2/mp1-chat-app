@@ -118,3 +118,15 @@ git push origin feature/new-feature
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
+
+## Members
+
+Joenne Mied Amancio
+Gabriel Angelo Badeo
+James Ejercito
+Rico Mendez
+Kim Casido Nique
+Charles Roy Phillips
+Lyward Manual Tongzon
+Shaw Jie Yao
+
