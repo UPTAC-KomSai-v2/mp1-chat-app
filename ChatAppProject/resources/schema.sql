@@ -78,13 +78,19 @@ CREATE TABLE Notifications (
     FOREIGN KEY (channel_id) REFERENCES Channels(channel_id) ON DELETE CASCADE
 );
 
+ALTER TABLE Users
+DROP COLUMN role;
+
+
+#POPULATE TABLES
+
 -- Insert sample data into Users table
 INSERT INTO Users (user_id, username, email, password_hash, profile_picture, role, last_login)
 VALUES
-    (1, 'alice', 'alice@example.com', 'hashed_password_1', 'alice_pic.png', 'user', '2024-10-30 08:00:00'),
-    (2, 'bob', 'bob@example.com', 'hashed_password_2', 'bob_pic.png', 'moderator', '2024-10-30 09:30:00'),
-    (3, 'charlie', 'charlie@example.com', 'hashed_password_3', 'charlie_pic.png', 'admin', '2024-10-31 11:45:00'),
-    (4, 'dave', 'dave@example.com', 'hashed_password_4', NULL, 'user', '2024-10-31 12:00:00');
+    (1, 'alice', 'alice@example.com', 'hashed_password_1', 'alice_pic.png', '2024-10-30 08:00:00'),
+    (2, 'bob', 'bob@example.com', 'hashed_password_2', 'bob_pic.png', '2024-10-30 09:30:00'),
+    (3, 'charlie', 'charlie@example.com', 'hashed_password_3', 'charlie_pic.png', '2024-10-31 11:45:00'),
+    (4, 'dave', 'dave@example.com', 'hashed_password_4', NULL, '2024-10-31 12:00:00');
 
 INSERT INTO Channels (channel_id, channel_name, is_private, created_by, created_at)
 VALUES
@@ -93,4 +99,25 @@ VALUES
     (3, 'Announcements', FALSE, 1, NOW()),
     (4, 'Development', FALSE, 3, NOW()),
     (5, 'Off-Topic', FALSE, 2, NOW());
+
+-- Populate Channel_Members table
+INSERT INTO Channel_Members (channel_member_id, channel_id, user_id, joined_at)
+VALUES
+    (1, 1, 1, NOW()),
+    (2, 2, 2, NOW()),
+    (3, 3, 1, NOW()),
+    (4, 4, 3, NOW()),
+    (5, 5, 2, NOW()),
+    (6, 1, 3, NOW()),
+    (7, 4, 4, NOW()),
+    (8, 5, 1, NOW());
+
+-- Populate Channel_Managers table
+INSERT INTO Channel_Managers (manager_id, channel_id, user_id, assigned_at, role)
+VALUES
+    (1, 1, 1, NOW(), 'admin'),
+    (2, 2, 2, NOW(), 'moderator'),
+    (3, 3, 1, NOW(), 'moderator'),
+    (4, 4, 3, NOW(), 'admin');
+
 
