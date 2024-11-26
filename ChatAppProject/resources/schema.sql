@@ -1,3 +1,5 @@
+DROP DATABASE IF exists chatapp_db;
+
 CREATE DATABASE IF NOT EXISTS chatapp_db;
 use chatapp_db;
 
@@ -7,7 +9,6 @@ CREATE TABLE Users (
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     profile_picture VARCHAR(255),
-    role ENUM('user', 'moderator', 'admin') NOT NULL,
     last_login DATETIME
 );
 
@@ -78,14 +79,10 @@ CREATE TABLE Notifications (
     FOREIGN KEY (channel_id) REFERENCES Channels(channel_id) ON DELETE CASCADE
 );
 
-ALTER TABLE Users
-DROP COLUMN role;
-
-
-#POPULATE TABLES
+-- POPULATE TABLES
 
 -- Insert sample data into Users table
-INSERT INTO Users (user_id, username, email, password_hash, profile_picture, role, last_login)
+INSERT INTO Users (user_id, username, email, password_hash, profile_picture, last_login)
 VALUES
     (1, 'alice', 'alice@example.com', 'hashed_password_1', 'alice_pic.png', '2024-10-30 08:00:00'),
     (2, 'bob', 'bob@example.com', 'hashed_password_2', 'bob_pic.png', '2024-10-30 09:30:00'),
