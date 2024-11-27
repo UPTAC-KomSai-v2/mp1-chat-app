@@ -25,7 +25,7 @@ import java.util.Map;
 public class UserLoginController {
 
     // Secret key for signing JWTs (store securely in environment variables)
-    private static final String SECRET_KEY = "your_secret_key";
+    private static final String SECRET_KEY = "k83JH+jsT7MqVfQrKm8P5J7qT+Ub43r8HoM9Fw==";
     private static final Key SIGNING_KEY = new SecretKeySpec(Base64.getDecoder().decode(SECRET_KEY), SignatureAlgorithm.HS256.getJcaName());
 
     @PostMapping
@@ -34,23 +34,32 @@ public class UserLoginController {
         String password = loginRequest.get("password");
 
         try {
+            // Find user by email or username
             User user = findUserByEmailOrUsername(emailOrUsername);
 
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials.");
             }
 
-            // Verify the password
+            // Verify the password using BCrypt
             if (!BCrypt.checkpw(password, user.getPasswordHash())) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials.");
             }
 
-            // Generate JWT
+            // Generate JWT token
             String token = generateJwtToken(user);
 
-            // Return the token
-            Map<String, String> response = new HashMap<>();
+            // Return the token and user details
+            Map<String, Object> response = new HashMap<>();
             response.put("token", token);
+            response.put("user", Map.of(
+                    "user_id", user.getUserID(),
+                    "username", user.getUsername(),
+                    "email", user.getEmail(),
+                    "profile_picture", user.getProfilePicture(),
+                    "role", user.getRole(),
+                    "last_login", user.getLastLogin()
+            ));
             response.put("message", "Login successful.");
 
             return ResponseEntity.ok(response);
@@ -60,9 +69,9 @@ public class UserLoginController {
         }
     }
 
-    // Fetch user by email or username
+    // Find user by email or username
     private User findUserByEmailOrUsername(String emailOrUsername) throws SQLException {
-        String query = "SELECT * FROM users WHERE email = ? OR username = ?";
+        String query = "SELECT * FROM Users WHERE email = ? OR username = ?";
 
         try (Connection conn = DatabaseUtils.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
@@ -76,6 +85,9 @@ public class UserLoginController {
                 user.setUsername(rs.getString("username"));
                 user.setEmail(rs.getString("email"));
                 user.setPasswordHash(rs.getString("password_hash"));
+                user.setProfilePicture(rs.getString("profile_picture"));
+                user.setRole(rs.getString("role"));
+                user.setLastLogin(rs.getString("last_login"));
                 return user;
             }
         }
@@ -85,9 +97,11 @@ public class UserLoginController {
     // Generate JWT
     private String generateJwtToken(User user) {
         long expirationTime = 1000 * 60 * 60 * 24; // 24 hours
+
         return Jwts.builder()
                 .setSubject(user.getUsername())
-                .claim("userId", user.getUserID())
+                .claim("user_id", user.getUserID())
+                .claim("role", user.getRole())
                 .claim("email", user.getEmail())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
